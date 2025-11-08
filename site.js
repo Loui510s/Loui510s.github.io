@@ -39,21 +39,39 @@ function openLightbox(index, triggerEl) {
 
   // create overlay if missing
   let overlay = document.getElementById('lightbox-overlay');
-            <div class="controls"><button class="close" aria-label="Close">Close</button></div>
-            <button class="nav-btn prev" aria-label="Previous image">‹</button>
-            <button class="nav-btn next" aria-label="Next image">›</button>
-            <div class="media"><img src="" alt="" /></div>
-            <div class="caption" id="lightbox-caption"></div>
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'lightbox-overlay';
     overlay.className = 'lightbox-overlay';
     overlay.innerHTML = `
       <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
         <div class="lightbox__inner">
           <div class="controls"><button class="close" aria-label="Close">Close</button></div>
+          <button class="nav-btn prev" aria-label="Previous image">‹</button>
+          <button class="nav-btn next" aria-label="Next image">›</button>
           <div class="media"><img src="" alt="" /></div>
-          <div class="caption"></div>
+          <div class="caption" id="lightbox-caption"></div>
         </div>
       </div>`;
     document.body.appendChild(overlay);
+
+    // wire up basic controls
+    const closeBtn = overlay.querySelector('.close');
+    if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+
+    const prevBtn = overlay.querySelector('.nav-btn.prev');
+    const nextBtn = overlay.querySelector('.nav-btn.next');
+    if (prevBtn) prevBtn.addEventListener('click', () => showIndex((overlay.__currentIndex || 0) - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => showIndex((overlay.__currentIndex || 0) + 1));
+
+    // close when clicking outside the dialog
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeLightbox();
+    });
+
+    // trap keyboard at overlay level
+    overlay.addEventListener('keydown', lightboxKeyHandler);
+  }
 
       overlay.addEventListener('keydown', lightboxKeyHandler);
       // prev/next buttons
