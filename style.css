@@ -57,3 +57,29 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
 }
 .gallery img { width: 100%; height: auto; display: block; }
 .gallery figcaption { padding: .6rem .8rem; color: #444; font-size: .92rem; }
+
+/* Lightbox / modal styles */
+.lightbox-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex;
+  align-items: center; justify-content: center; z-index: 1000; padding: 24px;
+}
+.lightbox { background: #fff; max-width: calc(var(--max) - 80px); width: 100%; border-radius: 8px; overflow: hidden; outline: none; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
+.lightbox__inner { display: flex; flex-direction: column; gap: 0; }
+.lightbox img { width: 100%; height: auto; display: block; max-height: 75vh; object-fit: contain; background: #000; }
+.lightbox .caption { padding: 12px 16px; color: #222; font-size: .98rem; }
+.lightbox .controls { display:flex; justify-content: flex-end; gap: 8px; padding: 8px 12px; }
+.lightbox button.close { background: #111; color: #fff; border: none; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; }
+.lightbox button.close:focus { outline: 3px solid #ffd54d; }
+
+/* highlight a focused/selected figure in the grid */
+.gallery figure.focused { box-shadow: 0 8px 30px rgba(16,24,40,0.12); border-color: #ddd; transform: scale(1.01); }
+
+/* make gallery images keyboard accessible focus styles */
+.gallery img[tabindex] { cursor: pointer; }
+.gallery img:focus { outline: 3px solid #ffd54d; outline-offset: 3px; }
+
+/* responsive: ensure modal fits on small screens */
+@media (max-width: 520px) {
+  .lightbox { border-radius: 6px; }
+  .lightbox img { max-height: 60vh; }
+}
