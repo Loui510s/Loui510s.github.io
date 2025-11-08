@@ -39,9 +39,11 @@ function openLightbox(index, triggerEl) {
 
   // create overlay if missing
   let overlay = document.getElementById('lightbox-overlay');
-  if (!overlay) {
-    overlay = document.createElement('div');
-    overlay.id = 'lightbox-overlay';
+            <div class="controls"><button class="close" aria-label="Close">Close</button></div>
+            <button class="nav-btn prev" aria-label="Previous image">‹</button>
+            <button class="nav-btn next" aria-label="Next image">›</button>
+            <div class="media"><img src="" alt="" /></div>
+            <div class="caption" id="lightbox-caption"></div>
     overlay.className = 'lightbox-overlay';
     overlay.innerHTML = `
       <div class="lightbox" role="dialog" aria-modal="true" aria-label="Image preview">
@@ -53,50 +55,45 @@ function openLightbox(index, triggerEl) {
       </div>`;
     document.body.appendChild(overlay);
 
-    // close on overlay click (but not when clicking the modal content)
+      overlay.addEventListener('keydown', lightboxKeyHandler);
+      // prev/next buttons
+      overlay.querySelector('.nav-btn.prev').addEventListener('click', () => showIndex(overlay.__currentIndex - 1));
+      overlay.querySelector('.nav-btn.next').addEventListener('click', () => showIndex(overlay.__currentIndex + 1));
     overlay.addEventListener('click', e => {
       if (e.target === overlay) closeLightbox();
-    });
-    // close button
-    overlay.querySelector('.close').addEventListener('click', closeLightbox);
-    // ESC to close & trap focus
-    overlay.addEventListener('keydown', lightboxKeyHandler);
-  }
+    // mark the clicked figure visually and save the trigger
+    document.querySelectorAll('.gallery figure').forEach(f => f.classList.remove('focused'));
+    if (triggerEl && triggerEl.closest('figure')) triggerEl.closest('figure').classList.add('focused');
+    overlay.__previouslyFocused = document.activeElement;
 
-  // populate and show
-  const imgEl = overlay.querySelector('.media img');
-  const capEl = overlay.querySelector('.caption');
-  const data = gallery[index];
-  imgEl.src = data.src;
-  imgEl.alt = data.alt || '';
-  capEl.textContent = data.caption || '';
+    // show overlay and set up content
+    overlay.style.display = 'flex';
+    overlay.classList.add('show');
+    overlay.setAttribute('aria-hidden', 'false');
 
-  // mark the clicked figure visually
-  document.querySelectorAll('.gallery figure').forEach(f => f.classList.remove('focused'));
-  if (triggerEl && triggerEl.closest('figure')) triggerEl.closest('figure').classList.add('focused');
+    // ensure caption has id and is used as label
+    const capEl = overlay.querySelector('#lightbox-caption');
+    const dialog = overlay.querySelector('.lightbox');
+    if (capEl) dialog.setAttribute('aria-labelledby', 'lightbox-caption');
 
-  // save focus and show overlay
-  overlay.style.display = 'flex';
-  overlay.setAttribute('aria-hidden', 'false');
-  const closeBtn = overlay.querySelector('.close');
-  overlay.__previouslyFocused = document.activeElement;
-  // focus the close button for accessibility
-  setTimeout(() => closeBtn.focus(), 10);
+    // show requested index
+    showIndex(index);
 
   // remember currently open overlay on document for external checks
   document.documentElement.classList.add('has-lightbox');
 
   // ensure focus trap state
-  overlay.__firstFocusable = closeBtn;
-  overlay.__lastFocusable = imgEl;
-}
+    overlay.style.display = 'none';
+    overlay.classList.remove('show');
+    overlay.setAttribute('aria-hidden', 'true');
+    document.documentElement.classList.remove('has-lightbox');
 
-function closeLightbox() {
-  const overlay = document.getElementById('lightbox-overlay');
-  if (!overlay) return;
-  overlay.style.display = 'none';
-  overlay.setAttribute('aria-hidden', 'true');
-  document.documentElement.classList.remove('has-lightbox');
+    // remove focused highlight from figures
+    document.querySelectorAll('.gallery figure').forEach(f => f.classList.remove('focused'));
+
+    // restore focus
+    const prev = overlay.__previouslyFocused;
+    if (prev && typeof prev.focus === 'function') prev.focus();
 
   // remove focused highlight from figures
   document.querySelectorAll('.gallery figure').forEach(f => f.classList.remove('focused'));
@@ -115,8 +112,55 @@ function lightboxKeyHandler(e) {
   if (e.key === 'Tab') {
     const focusables = overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     if (focusables.length === 0) return;
-    const first = focusables[0];
+      return;
+    }
+
+    // Left / Right to navigate
+    if (e.key === 'ArrowLeft') { showIndex((overlay.__currentIndex || 0) - 1); return; }
+    if (e.key === 'ArrowRight') { showIndex((overlay.__currentIndex || 0) + 1); return; }
     const last = focusables[focusables.length - 1];
+
+  // showIndex: updates the overlay to display the image at `index` (wraps around). Preloads neighbors.
+  function showIndex(index) {
+    const gallery = window.GALLERY || [];
+    if (!gallery || gallery.length === 0) return;
+    const overlay = document.getElementById('lightbox-overlay');
+    if (!overlay) return;
+
+    const len = gallery.length;
+    // wrap
+    let i = ((index % len) + len) % len;
+    overlay.__currentIndex = i;
+
+    const item = gallery[i];
+    const imgEl = overlay.querySelector('.media img');
+    const capEl = overlay.querySelector('#lightbox-caption');
+    const dialog = overlay.querySelector('.lightbox');
+
+    // use fullSrc if present, otherwise src
+    const src = item.fullSrc || item.src;
+    imgEl.style.opacity = 0;
+    // set new src, let it fade in when loaded
+    imgEl.onload = () => { imgEl.style.opacity = 1; };
+    imgEl.src = src;
+    imgEl.alt = item.alt || '';
+    if (capEl) capEl.textContent = item.caption || '';
+
+    // update aria label reference
+    if (capEl) dialog.setAttribute('aria-labelledby', 'lightbox-caption');
+
+    // ensure focus remains reasonable (keep focus on close button)
+    const closeBtn = overlay.querySelector('.close');
+    if (closeBtn) closeBtn.focus();
+
+    // preload neighbors
+    const prev = gallery[(i - 1 + len) % len];
+    const next = gallery[(i + 1) % len];
+    [prev, next].forEach(it => {
+      const url = (it && (it.fullSrc || it.src));
+      if (!url) return;
+      const p = new Image(); p.src = url;
+    });
     if (e.shiftKey && document.activeElement === first) {
       e.preventDefault(); last.focus();
     } else if (!e.shiftKey && document.activeElement === last) {

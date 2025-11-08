@@ -83,3 +83,23 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
   .lightbox { border-radius: 6px; }
   .lightbox img { max-height: 60vh; }
 }
+
+/* Prev/Next buttons inside lightbox */
+.lightbox .nav-btn {
+  position: absolute; top: 50%; transform: translateY(-50%); background: rgba(0,0,0,0.5);
+  border: none; color: #fff; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items:center; justify-content:center;
+  cursor: pointer; z-index: 2;
+}
+.lightbox .nav-btn:focus { outline: 3px solid #ffd54d; }
+.lightbox .nav-btn.prev { left: 12px; }
+.lightbox .nav-btn.next { right: 12px; }
+
+/* subtle fade/open animation */
+.lightbox-overlay { opacity: 0; transition: opacity 220ms ease; }
+.lightbox-overlay.show { opacity: 1; }
+.lightbox img { transition: transform 180ms ease, opacity 180ms ease; }
+
+/* smaller screens: make nav buttons slightly smaller */
+@media (max-width: 520px) {
+  .lightbox .nav-btn { width: 36px; height: 36px; }
+}
