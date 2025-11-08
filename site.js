@@ -18,7 +18,52 @@
     containerId = containerId || 'gallery';
     var data = window.GALLERY || [];
     var el = document.getElementById(containerId);
- 
+    if (!el) return;
+
+    // clear existing
+    el.innerHTML = '';
+
+    data.forEach(function (item, idx) {
+      var fig = document.createElement('figure');
+
+      var img = document.createElement('img');
+      img.src = item.src || '';
+      img.alt = item.alt || '';
+      img.setAttribute('loading', 'lazy');
+      img.tabIndex = 0;
+
+      // caption (optional)
+      if (item.caption) {
+        var cap = document.createElement('figcaption');
+        cap.textContent = item.caption;
+        fig.appendChild(cap);
+      }
+
+      fig.appendChild(img);
+      el.appendChild(fig);
+
+      // activation handlers: click and keyboard (Enter / Space)
+      img.addEventListener('click', function () { openLightbox(idx, img); });
+      img.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(idx, img); }
+      });
+    });
+  }
+
+  // overlay singleton cache
+  var __overlay = null;
+
+  // create overlay DOM (single instance)
+  function _createOverlay() {
+    if (__overlay) return __overlay;
+    var overlay = document.createElement('div');
+    overlay.className = 'lightbox-overlay';
+    overlay.style.display = 'none';
+    overlay.setAttribute('aria-hidden', 'true');
+
+    var inner = '';
+    inner += '<div class="lightbox" role="dialog" aria-modal="true">';
+    inner += '  <div class="lightbox__inner">';
     inner += '    <button class="close" aria-label="Close">×</button>';
     inner += '    <button class="nav-btn prev" aria-label="Previous image">‹</button>';
     inner += '    <button class="nav-btn next" aria-label="Next image">›</button>';
