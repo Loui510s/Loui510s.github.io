@@ -1,15 +1,70 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Louie Olsen</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="utf-8" />
+  <title>Louie Olsen — Photography</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="/style.css" />
 </head>
-<body>
-  <h1>Welcome to Loui510s.github.io</h1>
-  <p id="message"></p>
+<body data-page="home">
+  <!-- Header -->
+  <header>
+    <nav class="nav">
+      <a class="brand" href="/">Loui510s</a>
+      <ul>
+        <li><a data-page="home" href="/">Home</a></li>
+        <li><a data-page="nature" href="/nature.html">Nature</a></li>
+        <li><a data-page="astro" href="/astro.html">Astro</a></li>
+        <li><a data-page="landscape" href="/landscape.html">Landscape</a></li>
+        <li><a data-page="other" href="/other.html">Other</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <script src="app.js" defer></script>
+  <main>
+    <section class="hero">
+      <h1>Louie Olsen — Photography</h1>
+      <p>Nature, night skies, sweeping landscapes, and everything in between.</p>
+    </section>
+
+    <h2>Featured galleries</h2>
+    <div class="grid" style="margin-top:1rem">
+      <a class="card" href="/nature.html">
+        <img src="/images/nature/example.jpg" alt="">
+        <div class="p">
+          <div class="badge">Nature</div>
+          <div class="caption">Wild textures and greens</div>
+        </div>
+      </a>
+      <a class="card" href="/astro.html">
+        <img src="/images/astro/example.jpg" alt="">
+        <div class="p">
+          <div class="badge">Astro</div>
+          <div class="caption">Stars, Milky Way, and nightscapes</div>
+        </div>
+      </a>
+      <a class="card" href="/landscape.html">
+        <img src="/images/landscape/example.jpg" alt="">
+        <div class="p">
+          <div class="badge">Landscape</div>
+          <div class="caption">Mountains, coastlines, horizons</div>
+        </div>
+      </a>
+      <a class="card" href="/other.html">
+        <img src="/images/other/example.jpg" alt="">
+        <div class="p">
+          <div class="badge">Other</div>
+          <div class="caption">Street, macro, abstracts…</div>
+        </div>
+      </a>
+    </div>
+  </main>
+
+  <footer>
+    © <span id="y"></span> Louie Olsen · <span class="small">All photos © their owner.</span>
+  </footer>
+
+  <script src="/site.js" defer></script>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
 </body>
 </html>

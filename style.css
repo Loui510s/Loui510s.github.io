@@ -1,7 +1,59 @@
+:root { --max: 1100px; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
 body {
-  font-family: system-ui, sans-serif;
-  background: #fafafa;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height: 1.6;
   color: #222;
-  text-align: center;
-  margin-top: 5rem;
+  background: #fafafa;
 }
+header {
+  border-bottom: 1px solid #e5e5e5;
+  background: #fff;
+  position: sticky; top: 0; z-index: 10;
+}
+.nav {
+  max-width: var(--max); margin: 0 auto; padding: .75rem 1rem;
+  display: flex; gap: 1rem; align-items: center; justify-content: space-between;
+}
+.nav a.brand { font-weight: 700; letter-spacing: .2px; text-decoration: none; color: #111; }
+.nav ul { list-style: none; display: flex; gap: .75rem; margin: 0; padding: 0; flex-wrap: wrap; }
+.nav a {
+  text-decoration: none; color: #333; padding: .4rem .6rem; border-radius: .5rem;
+}
+.nav a.active, .nav a:hover { background: #f0f0f0; }
+
+main { max-width: var(--max); margin: 1.75rem auto; padding: 0 1rem; }
+footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: #666; font-size: .9rem; }
+
+.hero {
+  padding: 3rem 1rem; text-align: center; background: #fff; border: 1px solid #eee; border-radius: 1rem;
+}
+.hero h1 { margin: 0 0 .5rem; font-size: clamp(1.8rem, 3vw, 2.5rem); }
+.hero p { margin: 0; color: #555; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+.card {
+  background: #fff; border: 1px solid #eee; border-radius: .9rem; overflow: clip;
+  display: block; text-decoration: none; color: inherit;
+}
+.card img { display: block; width: 100%; height: 220px; object-fit: cover; }
+.card .p { padding: .75rem .9rem; }
+.badge { font-size: .75rem; color: #555; background: #f4f4f4; padding: .2rem .5rem; border-radius: .5rem; }
+.caption { font-size: .95rem; color: #333; }
+.small { font-size: .85rem; color: #777; }
+
+.gallery {
+  columns: 1; column-gap: 14px;
+}
+@media (min-width: 720px) { .gallery { columns: 2; } }
+@media (min-width: 1040px) { .gallery { columns: 3; } }
+.gallery figure {
+  break-inside: avoid; margin: 0 0 14px; background: #fff; border: 1px solid #eee; border-radius: .9rem; overflow: clip;
+}
+.gallery img { width: 100%; height: auto; display: block; }
+.gallery figcaption { padding: .6rem .8rem; color: #444; font-size: .92rem; }
