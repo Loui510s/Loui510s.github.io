@@ -23,6 +23,13 @@ header {
 }
 .nav a.active, .nav a:hover { background: #f0f0f0; }
 
+/* search UI in nav */
+.nav .search-container { display: flex; align-items: center; gap: .5rem; margin-left: 12px; }
+.nav .search-input { padding: .4rem .6rem; border: 1px solid #e2e2e2; border-radius: 6px; min-width: 180px; }
+.nav .search-input:focus { outline: 3px solid #ffd54d; }
+.nav .search-clear { background: transparent; border: none; cursor: pointer; color: #666; font-size: 1rem; }
+.search-hint { font-size: .82rem; color: #666; margin-left: .5rem; }
+
 main { max-width: var(--max); margin: 1.75rem auto; padding: 0 1rem; }
 footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: #666; font-size: .9rem; }
 
