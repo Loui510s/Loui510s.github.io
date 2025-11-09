@@ -298,6 +298,9 @@
   var prevBtn = overlay.querySelector('.nav-btn.prev');
   var nextBtn = overlay.querySelector('.nav-btn.next');
 
+    // small tooltip/hint for keyboard users
+    try { if (infoBtn) infoBtn.title = 'More information (press I)'; } catch (e) {}
+
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
     if (infoBtn) {
       infoBtn.addEventListener('click', function () {
@@ -330,31 +333,69 @@
   function tryExtractExif(url) {
     return new Promise(function (resolve) {
       if (!url) return resolve(null);
+      // If exif-js is available, prefer it for reliable extraction
+      function useHeuristic() {
+        try {
+          fetch(url).then(function (res) { return res.arrayBuffer(); }).then(function (buf) {
+            try {
+              var s = new TextDecoder('iso-8859-1').decode(buf);
+              var result = {};
+              var dateM = s.match(/(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/);
+              if (dateM) result.dateTaken = dateM[1];
+              var makeM = s.match(/Make\\x00{0,2}(.{1,40})\\x00/);
+              if (!makeM) makeM = s.match(/Make[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,40})/);
+              if (makeM) result.make = (makeM[1]||'').trim();
+              var modelM = s.match(/Model\\x00{0,2}(.{1,60})\\x00/);
+              if (!modelM) modelM = s.match(/Model[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
+              if (modelM) result.model = (modelM[1]||'').trim();
+              var lensM = s.match(/LensModel\\x00{0,2}(.{1,60})\\x00/);
+              if (!lensM) lensM = s.match(/Lens[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
+              if (lensM) result.lens = (lensM[1]||'').trim();
+              if (!result.dateTaken && !result.make && !result.model && !result.lens) return resolve(null);
+              resolve(result);
+            } catch (e) { resolve(null); }
+          }).catch(function () { resolve(null); });
+        } catch (e) { resolve(null); }
+      }
+
+      // If EXIF library is available, use it
+      if (window.EXIF) {
+        try {
+          var img = new Image();
+          img.crossOrigin = 'Anonymous';
+          img.onload = function () {
+            try {
+              window.EXIF.getData(img, function () {
+                var dt = window.EXIF.getTag(this, 'DateTimeOriginal') || window.EXIF.getTag(this, 'DateTime');
+                var make = window.EXIF.getTag(this, 'Make');
+                var model = window.EXIF.getTag(this, 'Model');
+                var lens = window.EXIF.getTag(this, 'LensModel') || window.EXIF.getTag(this, 'Lens');
+                var res = {};
+                if (dt) res.dateTaken = dt;
+                if (make || model) res.make = (make||'') + (model ? (' ' + model) : '');
+                if (lens) res.lens = lens;
+                resolve(Object.keys(res).length ? res : null);
+              });
+            } catch (e) { useHeuristic(); }
+          };
+          img.onerror = function () { useHeuristic(); };
+          img.src = url;
+          return;
+        } catch (e) { /* fall through to heuristic */ }
+      }
+
+      // try to load exif-js dynamically; if loaded, it will be used on next call
       try {
-        fetch(url).then(function (res) { return res.arrayBuffer(); }).then(function (buf) {
-          try {
-            var s = new TextDecoder('iso-8859-1').decode(buf);
-            var result = {};
-            // date pattern like 2021:07:14 12:34:56
-            var dateM = s.match(/(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/);
-            if (dateM) result.dateTaken = dateM[1];
-            // naive camera/make/model search
-            var makeM = s.match(/Make\x00{0,2}(.{1,40})\x00/);
-            if (!makeM) makeM = s.match(/Make[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,40})/);
-            if (makeM) result.make = (makeM[1]||'').trim();
-            var modelM = s.match(/Model\x00{0,2}(.{1,60})\x00/);
-            if (!modelM) modelM = s.match(/Model[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
-            if (modelM) result.model = (modelM[1]||'').trim();
-            // lens (may be LensModel or Lens)
-            var lensM = s.match(/LensModel\x00{0,2}(.{1,60})\x00/);
-            if (!lensM) lensM = s.match(/Lens[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
-            if (lensM) result.lens = (lensM[1]||'').trim();
-            // If we didn't find anything, resolve null
-            if (!result.dateTaken && !result.make && !result.model && !result.lens) return resolve(null);
-            resolve(result);
-          } catch (e) { resolve(null); }
-        }).catch(function () { resolve(null); });
-      } catch (e) { resolve(null); }
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/exif-js';
+        s.async = true;
+        s.onload = function () {
+          try { if (window.EXIF) { /* now try again using EXIF */ tryExtractExif(url).then(resolve).catch(function(){ resolve(null); }); return; } } catch (e) {}
+          useHeuristic();
+        };
+        s.onerror = function () { useHeuristic(); };
+        document.head.appendChild(s);
+      } catch (e) { useHeuristic(); }
     });
   }
 
