@@ -401,9 +401,18 @@
 
   function openLightbox(index, triggerEl) {
     index = typeof index === 'number' ? index : 0;
-    var gallery = window.GALLERY || [];
-    if (!gallery.length) return;
     var overlay = _createOverlay();
+    var gallery = window.GALLERY || [];
+    // If there is no gallery on this page but an image element triggered the lightbox,
+    // create a temporary single-item gallery so the info button and metadata work.
+    if ((!gallery || !gallery.length) && triggerEl && triggerEl.tagName === 'IMG') {
+      var src = triggerEl.src || triggerEl.getAttribute('src') || '';
+      var alt = triggerEl.alt || '';
+      var caption = triggerEl.getAttribute('data-caption') || triggerEl.getAttribute('title') || alt || '';
+      overlay.__tempGallery = [{ src: src, fullSrc: src, alt: alt, caption: caption }];
+      gallery = overlay.__tempGallery;
+      index = 0;
+    }
 
     var figs = document.querySelectorAll('.gallery figure');
     for (var f = 0; f < figs.length; f++) figs[f].classList.remove('focused');
@@ -436,6 +445,9 @@
     overlay.classList.remove('show');
     overlay.setAttribute('aria-hidden', 'true');
     document.documentElement.classList.remove('has-lightbox');
+
+    // clear any temporary gallery we created for standalone images
+    try { if (overlay.__tempGallery) overlay.__tempGallery = null; } catch (e) {}
 
     if (overlay.__docKeyHandler) document.removeEventListener('keydown', overlay.__docKeyHandler);
 
@@ -480,10 +492,10 @@
   }
 
   function showIndex(index) {
-    var gallery = window.GALLERY || [];
-    if (!gallery || gallery.length === 0) return;
     var overlay = _createOverlay();
     if (!overlay) return;
+    var gallery = overlay.__tempGallery || window.GALLERY || [];
+    if (!gallery || gallery.length === 0) return;
 
     var len = gallery.length;
     var i = ((index % len) + len) % len;
@@ -555,6 +567,29 @@
     window.renderGallery = renderGallery;
     window.openLightbox = openLightbox;
     window.closeLightbox = closeLightbox;
+
+    // delegate clicks on any image to open the lightbox with a single-item fallback.
+    try {
+      document.addEventListener('click', function (e) {
+        var t = e.target;
+        if (!t) return;
+        if (t.tagName === 'IMG' && !t.closest('.lightbox')) {
+          // allow images inside anchors to still open the lightbox (prevent navigation)
+          try { e.preventDefault(); } catch (err) {}
+          try { openLightbox(0, t); } catch (err) {}
+        }
+      }, false);
+
+      // keyboard activation: Enter or Space on focused image
+      document.addEventListener('keydown', function (e) {
+        var t = document.activeElement;
+        if (!t) return;
+        if ((e.key === 'Enter' || e.key === ' ') && t.tagName === 'IMG' && !t.closest('.lightbox')) {
+          try { e.preventDefault(); } catch (err) {}
+          try { openLightbox(0, t); } catch (err) {}
+        }
+      }, false);
+    } catch (err) {}
 
     // ensure header and footer are loaded, then highlight nav and create search UI
     try {

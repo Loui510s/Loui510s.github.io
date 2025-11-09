@@ -76,7 +76,7 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
 .lightbox img { width: 100%; height: auto; display: block; max-height: 55vh; object-fit: contain; background: #000; }
 .lightbox .caption { padding: 12px 16px; color: #222; font-size: .98rem; }
 .lightbox .controls { display:flex; justify-content: flex-end; gap: 8px; padding: 8px 12px; }
-.lightbox button.close { background: #111; color: #fff; border: none; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; }
+.lightbox button.close { background: transparent; color: #fff; border: none; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; }
 .lightbox button.close:focus { outline: 3px solid #ffd54d; }
 
 /* media container: default hides overflow; when zoomed we allow scrolling to pan the image */
@@ -120,7 +120,7 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
 .lightbox .info-btn:focus { outline: 3px solid #ffd54d; }
 
 /* move close button to top-left */
-.lightbox .close { position: absolute; top: 12px; left: 12px; z-index: 4; background: rgba(0,0,0,0.6); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; display:inline-flex; align-items:center; justify-content:center; }
+.lightbox .close { position: absolute; top: 12px; left: 12px; z-index: 4; background: transparent; border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; display:inline-flex; align-items:center; justify-content:center; }
 .lightbox .close:focus { outline: 3px solid #ffd54d; }
 .lightbox-counter:focus { outline: 3px solid #ffd54d; }
 .lightbox .nav-btn:focus { outline: 3px solid #ffd54d; }
