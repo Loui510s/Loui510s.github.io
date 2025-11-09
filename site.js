@@ -17,7 +17,10 @@
         }).then(function (html) {
           if (html && placeholder) placeholder.innerHTML = html;
           resolve();
-        }).catch(function () { resolve(); });
+        }).catch(function () {
+          try { if (placeholder) placeholder.innerHTML = DEFAULT_HEADER_HTML; } catch (e) { }
+          resolve();
+        });
       } catch (e) { resolve(); }
     });
   }
@@ -49,7 +52,15 @@
             try { var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear(); } catch (e) {}
           }
           resolve();
-        }).catch(function () { resolve(); });
+        }).catch(function () {
+          try {
+            if (placeholder) {
+              placeholder.innerHTML = DEFAULT_FOOTER_HTML;
+              try { var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear(); } catch (e) {}
+            }
+          } catch (e) {}
+          resolve();
+        });
       } catch (e) { resolve(); }
     });
   }

@@ -76,9 +76,9 @@
 
       // If DOM is already parsed, give site.js a tick to complete async injections, then run
       if(document.readyState === 'interactive' || document.readyState === 'complete'){
-        setTimeout(ready, 20);
+        setTimeout(ready, 45);
       } else {
-        window.addEventListener('DOMContentLoaded', function(){ setTimeout(ready, 20); });
+        window.addEventListener('DOMContentLoaded', function(){ setTimeout(ready, 45); });
       }
     })();
   </script>
