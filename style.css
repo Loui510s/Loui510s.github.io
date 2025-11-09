@@ -71,9 +71,9 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
   align-items: center; justify-content: center; z-index: 1000; padding: 24px;
 }
 .lightbox { background: #fff; max-width: calc(var(--max) - 80px); width: 100%; border-radius: 8px; overflow: hidden; outline: none; box-shadow: 0 20px 60px rgba(0,0,0,0.4); }
-.lightbox__inner { display: flex; flex-direction: column; gap: 0; }
-.lightbox { position: relative; }
-.lightbox img { width: 100%; height: auto; display: block; max-height: 75vh; object-fit: contain; background: #000; }
+.lightbox__inner { display: flex; flex-direction: column; gap: 0; max-height: 90vh; overflow: auto; }
+.lightbox { position: relative; max-height: 90vh; }
+.lightbox img { width: 100%; height: auto; display: block; max-height: 55vh; object-fit: contain; background: #000; }
 .lightbox .caption { padding: 12px 16px; color: #222; font-size: .98rem; }
 .lightbox .controls { display:flex; justify-content: flex-end; gap: 8px; padding: 8px 12px; }
 .lightbox button.close { background: #111; color: #fff; border: none; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; }
@@ -82,23 +82,9 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
 /* media container: default hides overflow; when zoomed we allow scrolling to pan the image */
 .lightbox .media { overflow: hidden; }
 .lightbox .media img { display: block; max-width: 100%; height: auto; }
-.lightbox.zoomed .media { overflow: auto; max-height: 80vh; }
-.lightbox.zoomed .media img { max-width: none; width: auto; height: auto; cursor: grab; }
-
-/* Fullscreen styling: when the lightbox is fullscreen, allow full-size scrolling/panning */
-.lightbox.fullscreen, .lightbox:fullscreen {
-  width: 100vw !important;
-  height: 100vh !important;
-  max-width: none !important;
-  border-radius: 0 !important;
-}
-.lightbox.fullscreen .media, .lightbox:fullscreen .media {
-  overflow: auto; max-height: none; height: 100vh;
-}
-.lightbox.fullscreen .media img, .lightbox:fullscreen .media img {
-  max-width: none; width: auto; height: auto; cursor: grab;
-}
-.lightbox.zoomed .media img:active { cursor: grabbing; }
+.lightbox-meta { padding: 12px 16px; color: #222; font-size: .95rem; border-top: 1px solid #efefef; max-height: 30vh; overflow: auto; }
+.lightbox-meta .meta-row { margin-bottom: 0.6rem; }
+.lightbox-meta .meta-row.small { color: #555; font-size: .9rem; }
 
 /* highlight a focused/selected figure in the grid */
 .gallery figure.focused { box-shadow: 0 8px 30px rgba(16,24,40,0.12); border-color: #ddd; transform: scale(1.01); }
@@ -126,6 +112,16 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
   background: rgba(0,0,0,0.5); color: #fff; padding: 6px 10px; border-radius: 999px; font-size: .9rem;
   display: inline-block; min-width: 48px; text-align: center;
 }
+.lightbox .info-btn {
+  position: absolute; top: 12px; right: 72px; z-index: 3;
+  background: rgba(0,0,0,0.6); color: #fff; border: none; width: 34px; height: 34px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 700;
+}
+.lightbox .info-btn:focus { outline: 3px solid #ffd54d; }
+
+/* move close button to top-left */
+.lightbox .close { position: absolute; top: 12px; left: 12px; z-index: 4; background: rgba(0,0,0,0.6); border: none; color: #fff; width: 34px; height: 34px; border-radius: 50%; display:inline-flex; align-items:center; justify-content:center; }
+.lightbox .close:focus { outline: 3px solid #ffd54d; }
 .lightbox-counter:focus { outline: 3px solid #ffd54d; }
 .lightbox .nav-btn:focus { outline: 3px solid #ffd54d; }
 .lightbox .nav-btn.prev { left: 12px; }

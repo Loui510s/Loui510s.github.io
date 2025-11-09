@@ -1,0 +1,474 @@
+Suggested metadata stubs for missing fields:
+
+  // Suggested metadata for images/astro/0Y8A9862-Enhanced-NR-Edit.png
+  {
+    // src: 'images/astro/0Y8A9862-Enhanced-NR-Edit.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for /images/astro/filename.jpg
+  {
+    // src: '/images/astro/filename.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/landscape/Solnedgang æbbevej 110721.png
+  {
+    // src: 'images/landscape/Solnedgang æbbevej 110721.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for /images/landscape/filename.jpg
+  {
+    // src: '/images/landscape/filename.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Bull Moose in the woods of Lille Viildmose, Birkesø-4.jpg
+  {
+    // src: 'images/nature/Bull Moose in the woods of Lille Viildmose, Birkesø-4.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/0Y8A3140 (1).jpg
+  {
+    // src: 'images/nature/0Y8A3140 (1).jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/0Y8A3307.jpg
+  {
+    // src: 'images/nature/0Y8A3307.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/0Y8A3329 (1).jpg
+  {
+    // src: 'images/nature/0Y8A3329 (1).jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Alm Blåfugl Rebild Bakker.jpg
+  {
+    // src: 'images/nature/Alm Blåfugl Rebild Bakker.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (1 of 22).png
+  {
+    // src: 'images/nature/Beavers (1 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (3 of 22).png
+  {
+    // src: 'images/nature/Beavers (3 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (4 of 22).png
+  {
+    // src: 'images/nature/Beavers (4 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (5 of 22).png
+  {
+    // src: 'images/nature/Beavers (5 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (9 of 22).png
+  {
+    // src: 'images/nature/Beavers (9 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (11 of 22).png
+  {
+    // src: 'images/nature/Beavers (11 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (14 of 22).png
+  {
+    // src: 'images/nature/Beavers (14 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (15 of 22).png
+  {
+    // src: 'images/nature/Beavers (15 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (18 of 22).png
+  {
+    // src: 'images/nature/Beavers (18 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (19 of 22).png
+  {
+    // src: 'images/nature/Beavers (19 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (21 of 22).png
+  {
+    // src: 'images/nature/Beavers (21 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Beavers (22 of 22).png
+  {
+    // src: 'images/nature/Beavers (22 of 22).png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/BlåBåndet VandNymfe ved kongemosen 12.07.21.png
+  {
+    // src: 'images/nature/BlåBåndet VandNymfe ved kongemosen 12.07.21.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 1.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 1.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 2.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 2.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 3.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 3.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 4.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 4.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 5.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 5.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 6.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 6.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 7.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 7.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 8.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 8.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 9.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 9.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 10.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 10.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 10.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 10.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 12.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 12.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 13.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 13.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 14.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 14.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 15.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 15.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Grøn Løvfrø på græsstrå 16.png
+  {
+    // src: 'images/nature/Grøn Løvfrø på græsstrå 16.png',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/bølle Blåfugl Rebild Bakker-2.jpg
+  {
+    // src: 'images/nature/bølle Blåfugl Rebild Bakker-2.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Tårnfalk i et tårn.jpg
+  {
+    // src: 'images/nature/Tårnfalk i et tårn.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Tårnfalk på en stolpe i Lille Vildmose.jpg
+  {
+    // src: 'images/nature/Tårnfalk på en stolpe i Lille Vildmose.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for images/nature/Bull Moose in the woods of Lille Viildmose, Birkesø-4.jpg
+  {
+    // src: 'images/nature/Bull Moose in the woods of Lille Viildmose, Birkesø-4.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },
+
+  // Suggested metadata for /images/nature/filename.jpg
+  {
+    // src: '/images/nature/filename.jpg',
+    dateTaken: '',
+    camera: '',
+    lens: '',
+    species: '',
+    speciesInfo: '',
+    description: '',
+  },

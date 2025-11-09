@@ -280,77 +280,82 @@
     inner += '<div class="lightbox" role="dialog" aria-modal="true">';
     inner += '  <div class="lightbox__inner">';
   inner += '    <button class="close" aria-label="Close">×</button>';
-  inner += '    <button class="zoom" aria-label="Toggle zoom">🔍</button>';
+  inner += '    <button class="info-btn" aria-label="More information" aria-expanded="false" aria-controls="lightbox-meta">i</button>';
   inner += '    <div class="lightbox-counter" aria-hidden="true"></div>';
   inner += '    <button class="nav-btn prev" aria-label="Previous image">‹</button>';
   inner += '    <button class="nav-btn next" aria-label="Next image">›</button>';
-    inner += '    <div class="media"><img src="" alt="" /></div>';
-    inner += '    <div id="lightbox-caption" class="caption"></div>';
+  inner += '    <div class="media"><img src="" alt="" /></div>';
+  inner += '    <div id="lightbox-caption" class="caption"></div>';
+  inner += '    <div id="lightbox-meta" class="lightbox-meta" aria-live="polite"></div>';
     inner += '  </div>';
     inner += '</div>';
 
     overlay.innerHTML = inner;
     document.body.appendChild(overlay);
 
-    var closeBtn = overlay.querySelector('.close');
-    var zoomBtn = overlay.querySelector('.zoom');
-    var prevBtn = overlay.querySelector('.nav-btn.prev');
-    var nextBtn = overlay.querySelector('.nav-btn.next');
+  var closeBtn = overlay.querySelector('.close');
+  var infoBtn = overlay.querySelector('.info-btn');
+  var prevBtn = overlay.querySelector('.nav-btn.prev');
+  var nextBtn = overlay.querySelector('.nav-btn.next');
 
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
+    if (infoBtn) {
+      infoBtn.addEventListener('click', function () {
+        try {
+          var dialog = overlay.querySelector('.lightbox');
+          var meta = overlay.querySelector('#lightbox-meta');
+          if (!meta || !dialog) return;
+          var isOpen = dialog.classList.toggle('meta-open');
+          infoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+          // ensure meta is visible when opened
+          meta.style.display = isOpen ? '' : 'none';
+          if (isOpen) {
+            try { meta.focus && meta.focus(); } catch (e) {}
+          }
+        } catch (e) {}
+      });
+    }
     if (prevBtn) prevBtn.addEventListener('click', function () { showIndex((overlay.__currentIndex || 0) - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { showIndex((overlay.__currentIndex || 0) + 1); });
 
-    // Zoom/Fullscreen toggle: prefer Fullscreen API, fall back to 'zoomed' class
-    function fallbackZoomToggle() {
-      var dialog = overlay.querySelector('.lightbox');
-      var media = overlay.querySelector('.media');
-      if (!dialog) return;
-      dialog.classList.toggle('zoomed');
-      setTimeout(function () { try { if (media) { media.scrollLeft = 0; media.scrollTop = 0; } } catch (e) {} }, 10);
-    }
-
-    if (zoomBtn) {
-      zoomBtn.addEventListener('click', function () {
-        var dialog = overlay.querySelector('.lightbox');
-        if (!dialog) return;
-        // If already in fullscreen, exit
-        if (document.fullscreenElement) { document.exitFullscreen().catch(function(){}); return; }
-        // Try to enter fullscreen on the dialog if supported
-        if (dialog.requestFullscreen) {
-          dialog.requestFullscreen().catch(function () { fallbackZoomToggle(); });
-        } else {
-          // No Fullscreen API: fallback to scrollable zoom
-          fallbackZoomToggle();
-        }
-      });
-    }
-
-    // double-click on the image toggles fullscreen/zoom
-    overlay.addEventListener('dblclick', function (e) {
-      var img = overlay.querySelector('.media img');
-      if (!img || e.target !== img) return;
-      var dialog = overlay.querySelector('.lightbox');
-      if (!dialog) return;
-      if (document.fullscreenElement) { document.exitFullscreen().catch(function(){}); }
-      else if (dialog.requestFullscreen) { dialog.requestFullscreen().catch(function () { fallbackZoomToggle(); }); }
-      else { fallbackZoomToggle(); }
-    });
-
-    // Keep a class on the dialog during fullscreen for styling; remove/add on change
-    document.addEventListener('fullscreenchange', function () {
-      var dialog = overlay && overlay.querySelector && overlay.querySelector('.lightbox');
-      if (!dialog) return;
-      try {
-        if (document.fullscreenElement === dialog) dialog.classList.add('fullscreen');
-        else dialog.classList.remove('fullscreen');
-      } catch (e) {}
-    });
+    // (zoom/fullscreen removed) 
 
     overlay.addEventListener('click', function (e) { if (e.target === overlay) closeLightbox(); });
 
     __overlay = overlay;
     return overlay;
+  }
+
+  // best-effort EXIF extraction (very small heuristic): fetch binary and search for common tags
+  function tryExtractExif(url) {
+    return new Promise(function (resolve) {
+      if (!url) return resolve(null);
+      try {
+        fetch(url).then(function (res) { return res.arrayBuffer(); }).then(function (buf) {
+          try {
+            var s = new TextDecoder('iso-8859-1').decode(buf);
+            var result = {};
+            // date pattern like 2021:07:14 12:34:56
+            var dateM = s.match(/(\d{4}:\d{2}:\d{2} \d{2}:\d{2}:\d{2})/);
+            if (dateM) result.dateTaken = dateM[1];
+            // naive camera/make/model search
+            var makeM = s.match(/Make\x00{0,2}(.{1,40})\x00/);
+            if (!makeM) makeM = s.match(/Make[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,40})/);
+            if (makeM) result.make = (makeM[1]||'').trim();
+            var modelM = s.match(/Model\x00{0,2}(.{1,60})\x00/);
+            if (!modelM) modelM = s.match(/Model[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
+            if (modelM) result.model = (modelM[1]||'').trim();
+            // lens (may be LensModel or Lens)
+            var lensM = s.match(/LensModel\x00{0,2}(.{1,60})\x00/);
+            if (!lensM) lensM = s.match(/Lens[^A-Za-z0-9]{0,3}([A-Za-z0-9 \-\_]{2,60})/);
+            if (lensM) result.lens = (lensM[1]||'').trim();
+            // If we didn't find anything, resolve null
+            if (!result.dateTaken && !result.make && !result.model && !result.lens) return resolve(null);
+            resolve(result);
+          } catch (e) { resolve(null); }
+        }).catch(function () { resolve(null); });
+      } catch (e) { resolve(null); }
+    });
   }
 
   function openLightbox(index, triggerEl) {
@@ -408,6 +413,21 @@
     if (e.key === 'ArrowLeft') { showIndex((overlay.__currentIndex || 0) - 1); return; }
     if (e.key === 'ArrowRight') { showIndex((overlay.__currentIndex || 0) + 1); return; }
 
+    // 'i' toggles the metadata/info panel when lightbox is open
+    if (e.key === 'i' || e.key === 'I') {
+      try {
+        var dialog = overlay.querySelector('.lightbox');
+        var meta = overlay.querySelector('#lightbox-meta');
+        var infoBtn = overlay.querySelector('.info-btn');
+        if (!meta || !dialog) return;
+        var isOpen = dialog.classList.toggle('meta-open');
+        if (infoBtn) infoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        meta.style.display = isOpen ? '' : 'none';
+        if (isOpen) { try { meta.focus && meta.focus(); } catch (err) {} }
+      } catch (err) {}
+      return;
+    }
+
     if (e.key === 'Tab') {
       var focusables = overlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
       if (!focusables || focusables.length === 0) return;
@@ -429,10 +449,12 @@
     overlay.__currentIndex = i;
 
     var item = gallery[i] || {};
-    var imgEl = overlay.querySelector('.media img');
-  var capEl = overlay.querySelector('#lightbox-caption');
-    var dialog = overlay.querySelector('.lightbox');
-  var counterEl = overlay.querySelector('.lightbox-counter');
+      var imgEl = overlay.querySelector('.media img');
+    var capEl = overlay.querySelector('#lightbox-caption');
+      var dialog = overlay.querySelector('.lightbox');
+    var counterEl = overlay.querySelector('.lightbox-counter');
+    var metaEl = overlay.querySelector('#lightbox-meta');
+    var infoBtn = overlay.querySelector('.info-btn');
 
     var src = (item.fullSrc || item.src) || '';
     imgEl.style.opacity = 0;
@@ -441,6 +463,43 @@
     imgEl.alt = item.alt || '';
     if (capEl) capEl.textContent = item.caption || '';
   if (counterEl) counterEl.textContent = (i + 1) + '/' + len;
+    // build metadata HTML from known fields if present
+    if (metaEl) {
+      var parts = [];
+      try {
+        if (item.dateTaken) parts.push('<div class="meta-row"><strong>Date:</strong> ' + _escapeHtml(item.dateTaken) + '</div>');
+        if (item.camera) parts.push('<div class="meta-row"><strong>Camera:</strong> ' + _escapeHtml(item.camera) + '</div>');
+        if (item.lens) parts.push('<div class="meta-row"><strong>Lens:</strong> ' + _escapeHtml(item.lens) + '</div>');
+        if (item.species) parts.push('<div class="meta-row"><strong>Species:</strong> ' + _escapeHtml(item.species) + '</div>');
+        if (item.speciesInfo) parts.push('<div class="meta-row small">' + _escapeHtml(item.speciesInfo) + '</div>');
+        if (item.description) parts.push('<div class="meta-row">' + _escapeHtml(item.description) + '</div>');
+      } catch (e) { parts = []; }
+      metaEl.innerHTML = parts.length ? parts.join('') : ''; 
+  // hide metadata panel by default; info button will reveal it
+  metaEl.style.display = 'none';
+      // metadata exists: keep hidden by default, show info button; if no metadata, hide button
+      try {
+        if (infoBtn) infoBtn.style.display = parts.length ? '' : 'none';
+        if (infoBtn) infoBtn.setAttribute('aria-expanded', 'false');
+        // ensure dialog doesn't have meta-open class by default
+        if (dialog) dialog.classList.remove('meta-open');
+      } catch (e) {}
+      // If metadata is missing entirely, attempt a best-effort EXIF extraction
+      if (!parts.length) {
+        tryExtractExif(item.src).then(function (exif) {
+          if (!exif) return;
+          var added = [];
+          if (exif.dateTaken) added.push('<div class="meta-row"><strong>Date:</strong> ' + _escapeHtml(exif.dateTaken) + '</div>');
+          if (exif.make || exif.model) added.push('<div class="meta-row"><strong>Camera:</strong> ' + _escapeHtml(((exif.make||'') + ' ' + (exif.model||'')).trim()) + '</div>');
+          if (exif.lens) added.push('<div class="meta-row"><strong>Lens:</strong> ' + _escapeHtml(exif.lens) + '</div>');
+          if (added.length) {
+            metaEl.innerHTML = added.join('');
+            metaEl.style.display = 'none';
+            if (infoBtn) { infoBtn.style.display = ''; infoBtn.setAttribute('aria-expanded','false'); }
+          }
+        }).catch(function(){ });
+      }
+    }
     if (dialog) dialog.setAttribute('aria-labelledby', 'lightbox-caption');
 
     var closeBtn = overlay.querySelector('.close');
