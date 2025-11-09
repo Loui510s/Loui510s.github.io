@@ -280,6 +280,7 @@
     inner += '<div class="lightbox" role="dialog" aria-modal="true">';
     inner += '  <div class="lightbox__inner">';
   inner += '    <button class="close" aria-label="Close">×</button>';
+  inner += '    <button class="zoom" aria-label="Toggle zoom">🔍</button>';
   inner += '    <div class="lightbox-counter" aria-hidden="true"></div>';
   inner += '    <button class="nav-btn prev" aria-label="Previous image">‹</button>';
   inner += '    <button class="nav-btn next" aria-label="Next image">›</button>';
@@ -292,12 +293,59 @@
     document.body.appendChild(overlay);
 
     var closeBtn = overlay.querySelector('.close');
+    var zoomBtn = overlay.querySelector('.zoom');
     var prevBtn = overlay.querySelector('.nav-btn.prev');
     var nextBtn = overlay.querySelector('.nav-btn.next');
 
     if (closeBtn) closeBtn.addEventListener('click', closeLightbox);
     if (prevBtn) prevBtn.addEventListener('click', function () { showIndex((overlay.__currentIndex || 0) - 1); });
     if (nextBtn) nextBtn.addEventListener('click', function () { showIndex((overlay.__currentIndex || 0) + 1); });
+
+    // Zoom/Fullscreen toggle: prefer Fullscreen API, fall back to 'zoomed' class
+    function fallbackZoomToggle() {
+      var dialog = overlay.querySelector('.lightbox');
+      var media = overlay.querySelector('.media');
+      if (!dialog) return;
+      dialog.classList.toggle('zoomed');
+      setTimeout(function () { try { if (media) { media.scrollLeft = 0; media.scrollTop = 0; } } catch (e) {} }, 10);
+    }
+
+    if (zoomBtn) {
+      zoomBtn.addEventListener('click', function () {
+        var dialog = overlay.querySelector('.lightbox');
+        if (!dialog) return;
+        // If already in fullscreen, exit
+        if (document.fullscreenElement) { document.exitFullscreen().catch(function(){}); return; }
+        // Try to enter fullscreen on the dialog if supported
+        if (dialog.requestFullscreen) {
+          dialog.requestFullscreen().catch(function () { fallbackZoomToggle(); });
+        } else {
+          // No Fullscreen API: fallback to scrollable zoom
+          fallbackZoomToggle();
+        }
+      });
+    }
+
+    // double-click on the image toggles fullscreen/zoom
+    overlay.addEventListener('dblclick', function (e) {
+      var img = overlay.querySelector('.media img');
+      if (!img || e.target !== img) return;
+      var dialog = overlay.querySelector('.lightbox');
+      if (!dialog) return;
+      if (document.fullscreenElement) { document.exitFullscreen().catch(function(){}); }
+      else if (dialog.requestFullscreen) { dialog.requestFullscreen().catch(function () { fallbackZoomToggle(); }); }
+      else { fallbackZoomToggle(); }
+    });
+
+    // Keep a class on the dialog during fullscreen for styling; remove/add on change
+    document.addEventListener('fullscreenchange', function () {
+      var dialog = overlay && overlay.querySelector && overlay.querySelector('.lightbox');
+      if (!dialog) return;
+      try {
+        if (document.fullscreenElement === dialog) dialog.classList.add('fullscreen');
+        else dialog.classList.remove('fullscreen');
+      } catch (e) {}
+    });
 
     overlay.addEventListener('click', function (e) { if (e.target === overlay) closeLightbox(); });
 

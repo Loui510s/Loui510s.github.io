@@ -79,6 +79,27 @@ footer { max-width: var(--max); margin: 3rem auto 2rem; padding: 0 1rem; color: 
 .lightbox button.close { background: #111; color: #fff; border: none; padding: .4rem .6rem; border-radius: 6px; cursor: pointer; }
 .lightbox button.close:focus { outline: 3px solid #ffd54d; }
 
+/* media container: default hides overflow; when zoomed we allow scrolling to pan the image */
+.lightbox .media { overflow: hidden; }
+.lightbox .media img { display: block; max-width: 100%; height: auto; }
+.lightbox.zoomed .media { overflow: auto; max-height: 80vh; }
+.lightbox.zoomed .media img { max-width: none; width: auto; height: auto; cursor: grab; }
+
+/* Fullscreen styling: when the lightbox is fullscreen, allow full-size scrolling/panning */
+.lightbox.fullscreen, .lightbox:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  border-radius: 0 !important;
+}
+.lightbox.fullscreen .media, .lightbox:fullscreen .media {
+  overflow: auto; max-height: none; height: 100vh;
+}
+.lightbox.fullscreen .media img, .lightbox:fullscreen .media img {
+  max-width: none; width: auto; height: auto; cursor: grab;
+}
+.lightbox.zoomed .media img:active { cursor: grabbing; }
+
 /* highlight a focused/selected figure in the grid */
 .gallery figure.focused { box-shadow: 0 8px 30px rgba(16,24,40,0.12); border-color: #ddd; transform: scale(1.01); }
 
