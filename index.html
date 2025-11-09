@@ -7,20 +7,8 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body data-page="home">
-  <!-- Header -->
-  <header>
-    <nav class="nav">
-      <a class="brand" href="https://github.com/Loui510s">Loui510s</a> <p> || </p> <a class="brand" href="https://www.instagram.com/louie.flo05/">Louie.flo05</a>
-      <ul>
-        <li><a data-page="home" href="/">Home</a></li>
-        <li><a data-page="nature" href="nature.html">Nature</a></li>
-        <li><a data-page="astro" href="astro.html">Astro</a></li>
-        <li><a data-page="landscape" href="landscape.html">Landscape</a></li>
-        <li><a data-page="other" href="other.html">Other</a></li>
-        <li><a data-page="about me" href="aboutme.html">About</a></li>
-      </ul>
-    </nav>
-  </header>
+  <!-- Header (injected from header.html) -->
+  <div id="site-header"></div>
 
   <main>
     <section class="hero">
@@ -61,9 +49,8 @@
     </div>
   </main>
 
-  <footer>
-    © <span id="y"></span> Louie Olsen · <span class="small">All photos © their owner.</span>
-  </footer>
+  <!-- footer injected from footer.html -->
+  <div id="site-footer"></div>
 
   <script src="site.js" defer></script>
   <script>document.getElementById('y').textContent = new Date().getFullYear();</script>

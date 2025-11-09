@@ -1,9 +1,54 @@
-// highlight current page link based on body data-page
+// site bootstrap: load shared header and initialize UI
 (function () {
-  var current = document.body && document.body.dataset && document.body.dataset.page;
-  if (current) {
-    document.querySelectorAll('.nav a[data-page]').forEach(function (a) {
-      if (a.dataset.page === current) a.classList.add('active');
+  // fetch and inject header.html into the page (if present)
+  function loadHeader() {
+    return new Promise(function (resolve) {
+      try {
+        var placeholder = document.getElementById('site-header');
+        if (!placeholder) {
+          // if no placeholder, resolve immediately
+          return resolve();
+        }
+        var url = 'header.html';
+        fetch(url).then(function (res) {
+          if (!res.ok) return resolve();
+          return res.text();
+        }).then(function (html) {
+          if (html && placeholder) placeholder.innerHTML = html;
+          resolve();
+        }).catch(function () { resolve(); });
+      } catch (e) { resolve(); }
+    });
+  }
+
+  function highlightCurrent() {
+    var current = document.body && document.body.dataset && document.body.dataset.page;
+    if (current) {
+      document.querySelectorAll('.nav a[data-page]').forEach(function (a) {
+        if (a.dataset.page === current) a.classList.add('active');
+      });
+    }
+  }
+  
+  // fetch and inject footer.html into #site-footer placeholder
+  function loadFooter() {
+    return new Promise(function (resolve) {
+      try {
+        var placeholder = document.getElementById('site-footer');
+        if (!placeholder) return resolve();
+        var url = 'footer.html';
+        fetch(url).then(function (res) {
+          if (!res.ok) return resolve();
+          return res.text();
+        }).then(function (html) {
+          if (html && placeholder) {
+            placeholder.innerHTML = html;
+            // set year if footer contains target span
+            try { var y = document.getElementById('y'); if (y) y.textContent = new Date().getFullYear(); } catch (e) {}
+          }
+          resolve();
+        }).catch(function () { resolve(); });
+      } catch (e) { resolve(); }
     });
   }
 
@@ -185,9 +230,10 @@
     var inner = '';
     inner += '<div class="lightbox" role="dialog" aria-modal="true">';
     inner += '  <div class="lightbox__inner">';
-    inner += '    <button class="close" aria-label="Close">×</button>';
-    inner += '    <button class="nav-btn prev" aria-label="Previous image">‹</button>';
-    inner += '    <button class="nav-btn next" aria-label="Next image">›</button>';
+  inner += '    <button class="close" aria-label="Close">×</button>';
+  inner += '    <div class="lightbox-counter" aria-hidden="true"></div>';
+  inner += '    <button class="nav-btn prev" aria-label="Previous image">‹</button>';
+  inner += '    <button class="nav-btn next" aria-label="Next image">›</button>';
     inner += '    <div class="media"><img src="" alt="" /></div>';
     inner += '    <div id="lightbox-caption" class="caption"></div>';
     inner += '  </div>';
@@ -287,8 +333,9 @@
 
     var item = gallery[i] || {};
     var imgEl = overlay.querySelector('.media img');
-    var capEl = overlay.querySelector('#lightbox-caption');
+  var capEl = overlay.querySelector('#lightbox-caption');
     var dialog = overlay.querySelector('.lightbox');
+  var counterEl = overlay.querySelector('.lightbox-counter');
 
     var src = (item.fullSrc || item.src) || '';
     imgEl.style.opacity = 0;
@@ -296,6 +343,7 @@
     imgEl.src = src;
     imgEl.alt = item.alt || '';
     if (capEl) capEl.textContent = item.caption || '';
+  if (counterEl) counterEl.textContent = (i + 1) + '/' + len;
     if (dialog) dialog.setAttribute('aria-labelledby', 'lightbox-caption');
 
     var closeBtn = overlay.querySelector('.close');
@@ -311,9 +359,13 @@
     window.openLightbox = openLightbox;
     window.closeLightbox = closeLightbox;
 
-    // create search UI when DOM is ready (safe to run multiple times)
+    // ensure header and footer are loaded, then highlight nav and create search UI
     try {
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', _createSearch);
-      else _createSearch();
-    } catch (e) { /* ignore */ }
+      loadHeader().then(function () {
+        return loadFooter();
+      }).then(function () {
+        highlightCurrent();
+        _createSearch();
+      }).catch(function () { try { highlightCurrent(); _createSearch(); } catch (e) {} });
+    } catch (e) { try { highlightCurrent(); _createSearch(); } catch (err) {} }
   })();
