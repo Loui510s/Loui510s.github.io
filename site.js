@@ -2,6 +2,7 @@
 (function () {
   // fetch and inject header.html into the page (if present)
   function loadHeader() {
+    var DEFAULT_HEADER_HTML = '<header>\n  <nav class="nav">\n    <a class="brand" href="index.html">Loui510s</a>\n    <p style="margin:0 8px;color:#888">||</p>\n    <a class="brand" href="https://www.instagram.com/louie.flo05/">Louie.flo05</a>\n    <ul>\n      <li><a data-page="home" href="index.html">Home</a></li>\n      <li><a data-page="nature" href="nature.html">Nature</a></li>\n      <li><a data-page="astro" href="astro.html">Astro</a></li>\n      <li><a data-page="landscape" href="landscape.html">Landscape</a></li>\n      <li><a data-page="other" href="other.html">Other</a></li>\n      <li><a data-page="about me" href="aboutme.html">About</a></li>\n    </ul>\n  </nav>\n</header>';
     return new Promise(function (resolve) {
       try {
         var placeholder = document.getElementById('site-header');
@@ -11,7 +12,7 @@
         }
         var url = 'header.html';
         fetch(url).then(function (res) {
-          if (!res.ok) return resolve();
+          if (!res.ok) return DEFAULT_HEADER_HTML;
           return res.text();
         }).then(function (html) {
           if (html && placeholder) placeholder.innerHTML = html;
@@ -32,13 +33,14 @@
   
   // fetch and inject footer.html into #site-footer placeholder
   function loadFooter() {
+    var DEFAULT_FOOTER_HTML = '<footer>\n  © <span id="y"></span> Louie Olsen · <span class="small">All photos © their owner.</span>\n</footer>';
     return new Promise(function (resolve) {
       try {
         var placeholder = document.getElementById('site-footer');
         if (!placeholder) return resolve();
         var url = 'footer.html';
         fetch(url).then(function (res) {
-          if (!res.ok) return resolve();
+          if (!res.ok) return DEFAULT_FOOTER_HTML;
           return res.text();
         }).then(function (html) {
           if (html && placeholder) {
