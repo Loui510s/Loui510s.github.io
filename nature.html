@@ -57,10 +57,28 @@
      { src: 'images/nature/Grøn Løvfrø på græsstrå 15.png', alt: 'Grøn Løvfrø på græsstrå 15', caption: 'Grøn Løvfrø in natural environment' },
      { src: 'images/nature/Grøn Løvfrø på græsstrå 16.png', alt: 'Grøn Løvfrø på græsstrå 16', caption: 'Grøn Løvfrø in natural environment' },
      { src: 'images/nature/bølle blåfugl Rebild Bakker-2.jpg', alt: 'bølle blåfugl Rebild Bakker-2', caption: 'Gossamer-winged butterfly ' },
-
   ];
   </script>
   <script src="site.js"></script>
-  <script>document.getElementById('y').textContent = new Date().getFullYear(); renderGallery();</script>
+  <script>
+    (function waitForFooterAndRender(){
+      function ready(){
+        try{
+          var y = document.getElementById('y');
+          if(y) y.textContent = new Date().getFullYear();
+        }catch(e){ /* ignore */ }
+        if(typeof renderGallery === 'function'){
+          try{ renderGallery(); }catch(e){ console.error('renderGallery error', e); }
+        }
+      }
+
+      // If DOM is already parsed, give site.js a tick to complete async injections, then run
+      if(document.readyState === 'interactive' || document.readyState === 'complete'){
+        setTimeout(ready, 20);
+      } else {
+        window.addEventListener('DOMContentLoaded', function(){ setTimeout(ready, 20); });
+      }
+    })();
+  </script>
 </body>
 </html>
