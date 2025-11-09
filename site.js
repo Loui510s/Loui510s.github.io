@@ -85,10 +85,26 @@
       var fig = document.createElement('figure');
 
       var img = document.createElement('img');
-      img.src = item.src || '';
       img.alt = item.alt || '';
-      img.setAttribute('loading', 'lazy');
+      img.decoding = 'async';
       img.tabIndex = 0;
+
+      var supportsNativeLazy = 'loading' in HTMLImageElement.prototype;
+      if (supportsNativeLazy) {
+        if (idx <= 1) {
+          img.setAttribute('loading', 'eager');
+          try { img.setAttribute('fetchpriority', 'high'); } catch (e) {}
+        } else {
+          img.setAttribute('loading', 'lazy');
+        }
+        img.src = item.src || '';
+      } else {
+        img.dataset.src = item.src || '';
+        img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
+      }
+
+      if (item.width) img.width = item.width;
+      if (item.height) img.height = item.height;
 
       // caption (optional)
       if (item.caption) {
@@ -105,6 +121,23 @@
       img.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openLightbox(idx, img); }
       });
+      // start observing if native lazy isn't supported
+      if (!('loading' in HTMLImageElement.prototype) && img.dataset && img.dataset.src) {
+        if (!__imgObserver) {
+          try {
+            __imgObserver = new IntersectionObserver(function (entries) {
+              entries.forEach(function (entry) {
+                if (!entry.isIntersecting) return;
+                var im = entry.target;
+                var real = im.dataset && im.dataset.src;
+                if (real) { im.src = real; im.removeAttribute('data-src'); }
+                try { __imgObserver.unobserve(im); } catch (e) {}
+              });
+            }, { rootMargin: '200px' });
+          } catch (e) { __imgObserver = null; }
+        }
+        try { if (__imgObserver) __imgObserver.observe(img); } catch (e) {}
+      }
     });
   }
 
@@ -113,6 +146,9 @@
 
   // search index cache
   var __searchIndex = null;
+  
+  // image lazy observer (fallback for browsers without native loading=lazy)
+  var __imgObserver = null;
 
   // create and inject search UI into the nav
   function _createSearch() {
