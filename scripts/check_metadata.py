@@ -25,7 +25,11 @@ for fn in html_files:
             stub_parts.append("  {")
             stub_parts.append(f"    // src: '{src}',")
             for f in missing:
-                stub_parts.append(f"    {f}: '',")
+                # Use an explicit empty double-quoted string for camera to match placeholders
+                if f == 'camera':
+                    stub_parts.append(f'    {f}: "",')
+                else:
+                    stub_parts.append(f"    {f}: '',")
             stub_parts.append("  },")
             suggest_lines.append('\n'.join(stub_parts))
 # write outputs
