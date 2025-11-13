@@ -25,71 +25,10 @@
     });
   }
 
-  // show an editor UI inside the metadata panel allowing manual edits and deletion
-  function showMetadataEditor(item, index, metaEl) {
-    try {
-      var overlay = _createOverlay();
-      metaEl.innerHTML = '';
-      var form = document.createElement('div');
-      form.className = 'meta-editor';
-
-      var fields = [
-        { key: 'dateTaken', label: 'Date' },
-        { key: 'camera', label: 'Camera' },
-        { key: 'lens', label: 'Lens' },
-        { key: 'species', label: 'Species' },
-        { key: 'speciesInfo', label: 'Species info' },
-        { key: 'description', label: 'Description', multiline: true }
-      ];
-
-      fields.forEach(function (f) {
-        var row = document.createElement('div'); row.className = 'meta-editor-row';
-        var label = document.createElement('label'); label.textContent = f.label; label.htmlFor = 'meta-' + f.key;
-        var control = f.multiline ? document.createElement('textarea') : document.createElement('input');
-        control.id = 'meta-' + f.key; control.name = f.key; if (!f.multiline) control.type = 'text';
-        control.value = item[f.key] || '';
-        row.appendChild(label); row.appendChild(control); form.appendChild(row);
-      });
-
-      var actions = document.createElement('div'); actions.className = 'meta-editor-actions';
-      var saveBtn = document.createElement('button'); saveBtn.type = 'button'; saveBtn.className = 'meta-save'; saveBtn.textContent = 'Save';
-      var cancelBtn = document.createElement('button'); cancelBtn.type = 'button'; cancelBtn.className = 'meta-cancel'; cancelBtn.textContent = 'Cancel';
-      var deleteBtn = document.createElement('button'); deleteBtn.type = 'button'; deleteBtn.className = 'meta-delete-confirm'; deleteBtn.textContent = 'Delete metadata';
-      actions.appendChild(saveBtn); actions.appendChild(cancelBtn); actions.appendChild(deleteBtn);
-      form.appendChild(actions);
-
-      var note = document.createElement('div'); note.className = 'meta-note'; note.textContent = 'Note: changes are stored in the page at runtime only. To persist to files, request a patch update.';
-      form.appendChild(note);
-
-      metaEl.appendChild(form);
-      try { var first = form.querySelector('input,textarea'); if (first) first.focus(); } catch (e) {}
-
-      saveBtn.addEventListener('click', function () {
-        try {
-          fields.forEach(function (f) {
-            var v = (form.querySelector('[name="' + f.key + '"]') || { value: '' }).value;
-            if (f.key === 'camera') {
-              // empty camera field -> explicit "no camera" marker (null)
-              if (v && String(v).trim() !== '') item.camera = String(v).trim(); else item.camera = null;
-            } else {
-              if (v && String(v).trim() !== '') item[f.key] = String(v).trim(); else delete item[f.key];
-            }
-          });
-          // reflect into page-level gallery if present
-          try { if (!overlay.__tempGallery && window.GALLERY && window.GALLERY[index]) { window.GALLERY[index] = item; } } catch (e) {}
-        } catch (e) {}
-        showIndex(index);
-      });
-
-      cancelBtn.addEventListener('click', function () { showIndex(index); });
-
-      deleteBtn.addEventListener('click', function () {
-        try { ['dateTaken','camera','lens','species','speciesInfo','description'].forEach(function (k) { try { delete item[k]; } catch (e) {} }); } catch (e) {}
-        try { if (!overlay.__tempGallery && window.GALLERY && window.GALLERY[index]) { window.GALLERY[index] = item; } } catch (e) {}
-        showIndex(index);
-      });
-    } catch (e) { /* ignore editor errors */ }
-  }
+  // Metadata editing was removed: metadata is read-only on the webpage.
+  // The previous in-page editor and delete controls were intentionally removed to prevent
+  // users from changing or removing metadata from the public site. Any persistent edits
+  // must be made by updating the HTML files or via the metadata scripts offline.
 
   function highlightCurrent() {
     var current = document.body && document.body.dataset && document.body.dataset.page;
@@ -610,15 +549,7 @@
         if (item.description) parts.push('<div class="meta-row">' + _escapeHtml(item.description) + '</div>');
       } catch (e) { parts = []; }
       metaEl.innerHTML = parts.length ? parts.join('') : '';
-      // append editor controls (Edit / Delete)
-      try {
-        var ctrl = document.createElement('div');
-        ctrl.className = 'meta-controls';
-        var editBtn = document.createElement('button'); editBtn.type = 'button'; editBtn.className = 'meta-edit'; editBtn.textContent = parts.length ? 'Edit metadata' : 'Add metadata';
-        var delBtn = document.createElement('button'); delBtn.type = 'button'; delBtn.className = 'meta-delete'; delBtn.textContent = 'Delete metadata';
-        ctrl.appendChild(editBtn); ctrl.appendChild(delBtn);
-        metaEl.appendChild(ctrl);
-      } catch (e) {}
+      // editor controls removed: metadata is read-only on the webpage
       // hide metadata panel by default; info button will reveal it
       metaEl.style.display = 'none';
       // metadata exists: keep hidden by default, show info button; if no metadata, still show info to allow adding
@@ -628,24 +559,7 @@
         // ensure dialog doesn't have meta-open class by default
         if (dialog) dialog.classList.remove('meta-open');
       } catch (e) {}
-      // wire editor buttons
-      try {
-        if (metaEl) {
-          var editButton = metaEl.querySelector('.meta-edit');
-          var delButton = metaEl.querySelector('.meta-delete');
-          if (editButton) editButton.addEventListener('click', function () { showMetadataEditor(item, i, metaEl); });
-          if (delButton) delButton.addEventListener('click', function () {
-            try {
-              // For camera, set to null to indicate explicit "no camera"; delete other fields
-              try { item.camera = null; } catch (e) { try { delete item.camera; } catch (er) {} }
-              ['dateTaken','lens','species','speciesInfo','description'].forEach(function (k) { try { delete item[k]; } catch (e) {} });
-              // if this is a real gallery entry, reflect back
-              try { if (!overlay.__tempGallery && window.GALLERY && window.GALLERY[i]) { window.GALLERY[i] = item; } } catch (e) {}
-              showIndex(i);
-            } catch (e) {}
-          });
-        }
-      } catch (e) {}
+      // editor wiring removed: no edit/delete actions are attached
       // If metadata is missing entirely, attempt a best-effort EXIF extraction
       if (!parts.length) {
         tryExtractExif(item.src).then(function (exif) {
@@ -664,19 +578,7 @@
               if (exifCamera) added.unshift('<div class="meta-row"><strong>Camera:</strong> ' + _escapeHtml(exifCamera) + '</div>');
             }
             metaEl.innerHTML = added.join('');
-            // append editor controls when EXIF-derived metadata appears
-            try {
-              var ctrl2 = document.createElement('div');
-              ctrl2.className = 'meta-controls';
-              var editBtn2 = document.createElement('button'); editBtn2.type = 'button'; editBtn2.className = 'meta-edit'; editBtn2.textContent = 'Edit metadata';
-              var delBtn2 = document.createElement('button'); delBtn2.type = 'button'; delBtn2.className = 'meta-delete'; delBtn2.textContent = 'Delete metadata';
-              ctrl2.appendChild(editBtn2); ctrl2.appendChild(delBtn2);
-              metaEl.appendChild(ctrl2);
-              if (editBtn2) editBtn2.addEventListener('click', function () { showMetadataEditor(item, i, metaEl); });
-              if (delBtn2) delBtn2.addEventListener('click', function () {
-                try { ['dateTaken','camera','lens','species','speciesInfo','description'].forEach(function (k) { try { delete item[k]; } catch (e) {} }); if (!overlay.__tempGallery && window.GALLERY && window.GALLERY[i]) { window.GALLERY[i] = item; } showIndex(i); } catch (e) {}
-              });
-            } catch (e) {}
+            // editor controls removed: EXIF-derived metadata is displayed read-only
             metaEl.style.display = 'none';
             if (infoBtn) { infoBtn.style.display = ''; infoBtn.setAttribute('aria-expanded','false'); }
           }
